@@ -2,19 +2,10 @@ services:
   - type: web
     name: event-feedback-analyzer
     env: python
-    buildCommand: |
-      pip install -r requirements.txt
-      python manage.py migrate
-      python manage.py collectstatic --noinput
+    buildCommand: pip install -r requirements.txt
     startCommand: gunicorn Event_Feedback_analyzer.wsgi:application
     envVars:
-      - key: DJANGO_SETTINGS_MODULE
-        value: Event_Feedback_analyzer.settings
-      - key: SECRET_KEY
-        value: c025e994fdbfbd93ec09dba07d7a09d1
-      - key: ALLOWED_HOSTS
-        value: .onrender.com
-      - key: DATABASE_URL
-        fromDatabase:
-          name: event_feedback_db
-          property: connectionString
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: False
