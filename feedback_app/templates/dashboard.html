@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard">
+    <h1>Welcome, {{ user.username }}</h1>
+    <a href="{% url 'create_event' %}" class="btn">Create New Event</a>
+    
+    <h2>Your Events</h2>
+    <div class="event-list">
+        {% for event in events %}
+            <div class="event-card">
+                <h3>{{ event.title }}</h3>
+                <p>{{ event.get_event_type_display }}</p>
+                <div class="event-actions">
+                    <a href="{% url 'create_feedback_form' event.id %}" class="btn">Feedback Form</a>
+                    <a href="{% url 'view_analytics' event.id %}" class="btn">View Analytics</a>
+                </div>
+            </div>
+        {% empty %}
+            <p>No events found. Create your first event!</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

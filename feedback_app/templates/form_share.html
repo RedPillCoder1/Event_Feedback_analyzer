@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="share-form">
+    <h2>Share Feedback Form for {{ feedback_form.event.title }}</h2>
+    
+    <div class="share-link">
+        <p>Share this link with your participants:</p>
+        <div class="link-box">
+            <input type="text" value="{{ share_url }}" id="share-url" readonly>
+            <button onclick="copyToClipboard()" class="btn">Copy</button>
+        </div>
+    </div>
+    
+    <script>
+        function copyToClipboard() {
+            const copyText = document.getElementById("share-url");
+            copyText.select();
+            copyText.setSelectionRange(0, 99999);
+            document.execCommand("copy");
+            alert("Link copied to clipboard!");
+        }
+    </script>
+    
+    <div class="qr-code">
+      <p>Or scan this QR code:</p>
+      <img src="https://api.qrserver.com/v1/create-qr-code/?data={{ share_url }}&size=150x150" alt="QR Code">
+  </div>
+</div>
+{% endblock %}

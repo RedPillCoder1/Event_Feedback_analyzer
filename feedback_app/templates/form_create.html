@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="form-builder">
+    <h2>Feedback Form for {{ event.title }}</h2>
+    
+    <div class="form-creation-methods">
+        <div class="ai-generation">
+            <h3>AI-Assisted Question Generation</h3>
+            <form method="post">
+                {% csrf_token %}
+                {{ ai_form.as_p }}
+                <button type="submit" name="ai_generate" class="btn">Generate Questions</button>
+            </form>
+        </div>
+        
+        <div class="manual-creation">
+            <h3>Manual Question Creation</h3>
+            <form method="post">
+                {% csrf_token %}
+                {{ question_form.as_p }}
+                <button type="submit" class="btn">Add Question</button>
+            </form>
+        </div>
+    </div>
+    
+    <div class="current-questions">
+        <h3>Current Questions</h3>
+        {% if questions %}
+            <ol>
+                {% for question in questions %}
+                    <li>
+                        {{ question.question_text }} ({{ question.get_question_type_display }})
+                        {% if question.required %}<span class="required">*required</span>{% endif %}
+                    </li>
+                {% endfor %}
+            </ol>
+        {% else %}
+            <p>No questions added yet.</p>
+        {% endif %}
+    </div>
+    
+    <div class="form-actions">
+        <a href="{% url 'share_feedback_form' feedback_form.id %}" class="btn">Share Form</a>
+        <a href="{% url 'view_analytics' event.id %}" class="btn">View Analytics</a>
+    </div>
+</div>
+{% endblock %}

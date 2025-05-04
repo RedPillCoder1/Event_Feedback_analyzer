@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <h2 class="text-2xl font-bold mb-4">Analytics for "{{ event.title }}"</h2>
+    <p>Total Responses: {{ responses_count }}</p>
+
+    <!-- Rating Questions -->
+<div class="mt-6">
+  <h3 class="text-xl font-semibold">Rating Questions</h3>
+  {% for q in rating_questions %}
+      <div class="bg-white p-4 rounded shadow my-4">
+          <p class="font-semibold">{{ q.question }}</p>
+          <p>Average Rating: {{ q.avg_rating }}</p>
+
+          <!-- Bar Chart -->
+          <canvas id="ratingChart{{ forloop.counter }}" width="400" height="200"></canvas>
+
+          <script>
+              const ctxRating{{ forloop.counter }} = document.getElementById('ratingChart{{ forloop.counter }}').getContext('2d');
+              new Chart(ctxRating{{ forloop.counter }}, {
+                  type: 'bar',
+                  data: {
+                      labels: [{% for rating in q.rating_counts %}'{{ rating.rating_answer }}',{% endfor %}],
+                      datasets: [{
+                          label: 'Number of Responses',
+                          data: [{% for rating in q.rating_counts %}{{ rating.count }},{% endfor %}],
+                          backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                          borderColor: 'rgba(54, 162, 235, 1)',
+                          borderWidth: 1
+                      }]
+                  },
+                  options: {
+                      responsive: false,
+                      maintainAspectRatio: false,
+                      scales: {
+                          y: {
+                              beginAtZero: true,
+                              title: {
+                                  display: true,
+                                  text: 'Responses'
+                              }
+                          },
+                          x: {
+                              title: {
+                                  display: true,
+                                  text: 'Rating (Stars)'
+                              }
+                          }
+                      },
+                      plugins: {
+                          legend: {
+                              display: false
+                          },
+                          title: {
+                              display: true,
+                              text: 'Rating Distribution'
+                          }
+                      }
+                  }
+              });
+          </script>
+      </div>
+  {% endfor %}
+</div>
+
+    <!-- Text Questions with Sentiment Analysis -->
+    <div class="mt-6">
+        <h3 class="text-xl font-semibold">Text Questions & Sentiment Analysis</h3>
+        {% for q in text_questions %}
+            <div class="bg-white p-4 rounded shadow my-6">
+                <p class="font-semibold">{{ q.question }}</p>
+
+                <!-- Sentiment Pie Chart -->
+                <canvas id="sentimentChart{{ forloop.counter }}" width="500" height="250"></canvas>
+
+                <script>
+                    const ctx{{ forloop.counter }} = document.getElementById('sentimentChart{{ forloop.counter }}').getContext('2d');
+                    new Chart(ctx{{ forloop.counter }}, {
+                        type: 'pie',
+                        data: {
+                            labels: ['Positive', 'Neutral', 'Negative'],
+                            datasets: [{
+                                data: [
+                                    {{ q.sentiments.positive }},
+                                    {{ q.sentiments.neutral }},
+                                    {{ q.sentiments.negative }}
+                                ],
+                                backgroundColor: [
+                                    'rgba(75, 192, 192, 0.7)',
+                                    'rgba(255, 205, 86, 0.7)',
+                                    'rgba(255, 99, 132, 0.7)'
+                                ],
+                                borderColor: [
+                                    'rgba(75, 192, 192, 1)',
+                                    'rgba(255, 205, 86, 1)',
+                                    'rgba(255, 99, 132, 1)'
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: false,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'top',
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Sentiment Distribution'
+                                }
+                            }
+                        }
+                    });
+                </script>
+
+                <!-- Feedback Examples -->
+                <div class="mt-4">
+                    <h4 class="text-lg font-medium mb-2">Feedback Examples:</h4>
+                    <ul class="list-disc ml-5">
+                        {% for fb in q.feedbacks %}
+                            <li>"{{ fb.text }}" <small>(Score: {{ fb.score }})</small></li>
+                        {% empty %}
+                            <li>No feedback yet.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

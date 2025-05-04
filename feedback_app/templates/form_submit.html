@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="feedback-submission">
+    {% if success %}
+        <div class="success-message">
+            <h2>Thank You!</h2>
+            <p>Your feedback has been submitted successfully.</p>
+        </div>
+    {% else %}
+        <h2>Feedback for {{ feedback_form.event.title }}</h2>
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="participant-info">
+                <h3>Your Information</h3>
+                {{ response_form.as_p }}
+            </div>
+            
+            <div class="feedback-questions">
+                <h3>Feedback Questions</h3>
+                {% for question in questions %}
+                    <div class="question">
+                        <label>
+                            {{ question.question_text }}
+                            {% if question.required %}<span class="required">*</span>{% endif %}
+                        </label>
+                        
+                        {% if question.question_type == 'RATING' %}
+                            <div class="rating-options">
+                                <span class="rating-labels">
+                                    <span>Poor</span>
+                                    {% for i in "12345" %}
+                                    <label>
+                                        <input type="radio" name="question_{{ question.id }}" value="{{ i }}" {% if question.required %}required{% endif %}>
+                                        {{ i }}
+                                    </label>
+                                    {% endfor %}
+                                    <span>Excellent</span>
+                                </span>
+                            </div>
+                        {% else %}
+                            <textarea name="question_{{ question.id }}" {% if question.required %}required{% endif %} rows="3"></textarea>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <button type="submit" class="btn">Submit Feedback</button>
+        </form>
+    {% endif %}
+</div>
+{% endblock %}
