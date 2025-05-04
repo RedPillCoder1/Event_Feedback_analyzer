@@ -132,3 +132,9 @@ LOGOUT_REDIRECT_URL = 'login'  # Redirect after logout
 
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'unsafe-secret-key')
 DEBUG = os.environ.get('DEBUG', '') != 'False'
+
+RENDER_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_HOSTNAME:
+    ALLOWED_HOSTS = [RENDER_HOSTNAME]
+else:
+    ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
