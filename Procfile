@@ -1,0 +1,1 @@
+web: gunicorn event_feedback_analyzer.wsgi:application
