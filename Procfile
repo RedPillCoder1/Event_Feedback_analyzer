@@ -1,1 +1,1 @@
-web: gunicorn event_feedback_analyzer.wsgi:application
+web: gunicorn Event_Feedback_analyzer.wsgi:application
